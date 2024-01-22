@@ -2,16 +2,17 @@ NAME		=	philo
 BONUS_NAME	=
 
 INCLUDES	=	includes/
-SRCS_FOLDER	=	sources/
-OBJS_FOLDER	=	objects/
+SRCS_FOLDER	=	srcs/
+OBJS_FOLDER	=	.objs/
 
-SRCS_FILES	=	main.c
+SRCS_FILES	=	main.c error.c ft_strtoi.c parsing.c \
+				philo_struct.c philo_life.c
 
 OBJS		=	$(addprefix $(OBJS_FOLDER),$(SRCS_FILES:.c=.o))
 SRCS		=	$(addprefix $(SRCS_FOLDER),$(SRCS_FILES))
 
-DEPS		=	$(INCLUDES)libft.h
-STATIC_LINK	=
+DEPS		=
+STATIC_LINK	=	-lpthread
 
 CC			=	cc
 CFLAGS		=	-Wall -Wextra -Werror -g3 -I$(INCLUDES)
