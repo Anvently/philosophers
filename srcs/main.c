@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 09:59:49 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/22 16:59:47 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/22 18:10:24 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 
 int	main(int argc, char **argv)
 {
-	pthread_t	*threads;
 	t_philo		*philos;
 	t_settings	settings;
 
@@ -30,9 +29,9 @@ int	main(int argc, char **argv)
 		return (error("too many arguments"), 1);
 	if (parse_settings(&settings, argv + 1, argc))
 		return (1);
-	if (philo_alloc(&settings, &threads, &philos)
-		|| philo_create(&settings, threads, philos))
-		return (philo_free(&threads, &philos), 1);
-	philo_free(&threads, &philos);
+	if (philo_alloc(&settings, &philos)
+		|| philo_create(&settings, philos))
+		return (philo_free(&philos), 1);
+	philo_free(&philos);
 	return (0);
 }

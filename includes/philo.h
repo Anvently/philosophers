@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 10:01:11 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/22 17:32:31 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/22 18:09:49 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef struct s_philo {
 	t_timeval	last_sleep;
 	t_timeval	last_meal;
 	int			nbr_meals;
-	pthread_t	*thread;
+	pthread_t	thread;
 	bool		is_dead;
 }				t_philo;
 
@@ -47,11 +47,9 @@ int		parse_settings(t_settings *settings, char **args, int argc);
 
 void	error(char *str);
 
-int		philo_alloc(t_settings *settings, pthread_t **threads_ptr,
-			t_philo **philos_ptr);
-void	philo_free(pthread_t **threads_ptr, t_philo **philos_ptr);
-int		philo_create(t_settings *settings, pthread_t *threads,
-			t_philo *philos);
+int		philo_alloc(t_settings *settings, t_philo **philos_ptr);
+void	philo_free(t_philo **philos_ptr);
+int		philo_create(t_settings *settings, t_philo *philos);
 
 void	*philo_routine(void *data);
 bool	philo_check_dead(t_settings *settings, t_philo *philos);
