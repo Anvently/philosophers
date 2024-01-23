@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 09:59:49 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/22 18:10:24 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/23 17:33:55 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,14 @@
 #include <unistd.h>
 #include <philo.h>
 #include <errno.h>
+#include <string.h>
 
 int	main(int argc, char **argv)
 {
-	t_philo		*philos;
-	t_settings	settings;
+	t_philo			*philos;
+	t_settings		settings;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	print_mutex;
 
 	if (argc < 5)
 		return (error("unsifficient number of arguments\n"
@@ -27,11 +30,15 @@ int	main(int argc, char **argv)
 				" [number_of_times_each_philosopher_must_eat]"), 1);
 	else if (argc > 6)
 		return (error("too many arguments"), 1);
+	memset(&settings, 0, sizeof(t_settings));
 	if (parse_settings(&settings, argv + 1, argc))
 		return (1);
-	if (philo_alloc(&settings, &philos)
-		|| philo_create(&settings, philos))
-		return (philo_free(&philos), 1);
-	philo_free(&philos);
+	print_settings(&settings);
+	philos = NULL;
+	forks = NULL;
+	if (philo_alloc(&settings, &philos) || fork_alloc(&settings, &forks)
+		|| philo_start(&settings, philos, forks, &print_mutex))
+		return (philo_free(&settings, &philos, &forks), 1);
+	philo_free(&settings, &philos, &forks);
 	return (0);
 }

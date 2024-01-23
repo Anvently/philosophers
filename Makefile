@@ -6,7 +6,9 @@ SRCS_FOLDER	=	srcs/
 OBJS_FOLDER	=	.objs/
 
 SRCS_FILES	=	main.c error.c ft_strtoi.c parsing.c \
-				philo_struct.c philo_life.c
+				philo_struct.c philo_life.c philo_init.c philo_forks.c \
+				philo_monitor.c \
+				print.c check.c
 
 OBJS		=	$(addprefix $(OBJS_FOLDER),$(SRCS_FILES:.c=.o))
 SRCS		=	$(addprefix $(SRCS_FOLDER),$(SRCS_FILES))
