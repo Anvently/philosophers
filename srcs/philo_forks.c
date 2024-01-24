@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:51:06 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/24 12:10:47 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 17:05:09 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,12 @@ int	unlock_forks(t_philo *philo)
 /// @return
 int	take_both_forks(t_philo *philo)
 {
+	if (!philo->left_fork || !philo->right_fork)
+	{
+		print_msg(philo, msg_fork_taken);
+		usleep(philo->settings->meal_duration * 1000);
+		return (1);
+	}
 	if ((philo->number % 2 == 0 && take_fork(philo, philo->left_fork,
 				&philo->has_left_fork))
 		|| (philo->number % 2 == 1 && take_fork(philo, philo->right_fork,

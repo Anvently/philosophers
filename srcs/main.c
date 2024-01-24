@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 09:59:49 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/24 15:47:41 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 16:10:00 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ int	main(int argc, char **argv)
 	memset(&settings, 0, sizeof(t_settings));
 	if (parse_settings(&settings, argv + 1, argc))
 		return (1);
+	if (settings.nbr_philo == 0)
+		return (0);
 	philos = NULL;
 	forks = NULL;
 	if (philo_alloc(&settings, &philos) || fork_alloc(&settings, &forks)

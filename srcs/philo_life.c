@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 16:24:52 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/24 14:42:49 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 17:21:02 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,26 +22,22 @@ void	philo_die(t_philo *philo)
 	pthread_mutex_unlock(&philo->local_mutex);
 }
 
-bool	philo_is_dead(t_philo *philo)
+static int	philo_update_nbr_meals(t_philo *philo)
 {
-	bool	ret;
-
-	ret = false;
 	if (pthread_mutex_lock(&philo->local_mutex))
+		return (1);
+	philo->nbr_meals++;
+	if (philo->nbr_meals == philo->settings->nbr_meal_to_end)
 	{
-		philo->is_dead = true;
-		return (true);
+		if (pthread_mutex_unlock(&philo->local_mutex))
+			return (1);
+		if (print_msg(philo, msg_ended))
+			return (1);
+		return (0);
 	}
-	if (philo->is_dead)
-		ret = true;
-	else
-		ret = false;
 	if (pthread_mutex_unlock(&philo->local_mutex))
-	{
-		philo->is_dead = true;
-		return (true);
-	}
-	return (ret);
+		return (1);
+	return (0);
 }
 
 static int	philo_eat(t_philo *philo)
@@ -50,24 +46,16 @@ static int	philo_eat(t_philo *philo)
 		return (1);
 	if (print_msg(philo, msg_is_eating))
 		return (philo_die(philo), 1);
+	if (pthread_mutex_lock(&philo->local_mutex)
+		|| gettimeofday(&philo->last_meal, NULL)
+		|| pthread_mutex_unlock(&philo->local_mutex))
+		return (philo_die(philo), 1);
 	usleep(philo->settings->meal_duration * 1000);
 	if (unlock_forks(philo))
 		return (philo_die(philo), 1);
 	if (philo_is_dead(philo))
 		return (1);
-	if (pthread_mutex_lock(&philo->local_mutex))
-		return (philo_die(philo), 1);
-	gettimeofday(&philo->last_meal, NULL);
-	philo->nbr_meals++;
-	if (philo->nbr_meals == philo->settings->nbr_meal_to_end)
-	{
-		if (pthread_mutex_unlock(&philo->local_mutex))
-			return (philo_die(philo), 1);
-		if (print_msg(philo, msg_ended))
-			return (philo_die(philo), 1);
-		return (0);
-	}
-	if (pthread_mutex_unlock(&philo->local_mutex))
+	if (philo_update_nbr_meals(philo))
 		return (philo_die(philo), 1);
 	return (0);
 }

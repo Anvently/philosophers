@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:27:12 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/24 15:47:48 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 17:16:22 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,26 @@ bool	check_time(t_timeval *last_time, int max)
 		>= (long)(max * 1000))
 		return (true);
 	return (false);
+}
+
+bool	philo_is_dead(t_philo *philo)
+{
+	bool	ret;
+
+	ret = false;
+	if (pthread_mutex_lock(&philo->local_mutex))
+	{
+		philo->is_dead = true;
+		return (true);
+	}
+	if (philo->is_dead)
+		ret = true;
+	else
+		ret = false;
+	if (pthread_mutex_unlock(&philo->local_mutex))
+	{
+		philo->is_dead = true;
+		return (true);
+	}
+	return (ret);
 }

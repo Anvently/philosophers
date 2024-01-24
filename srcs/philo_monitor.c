@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 17:09:47 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/24 15:31:23 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 17:05:24 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ static int	philo_check_status(t_philo *philo)
 	if (check_time(&philo->last_meal, philo->settings->time_to_die))
 		return (pthread_mutex_unlock(&philo->local_mutex),
 			print_msg(philo, msg_died), 1);
-	if (philo->nbr_meals < philo->settings->nbr_meal_to_end)
+	if (philo->settings->nbr_meal_to_end < 0
+		|| philo->nbr_meals < philo->settings->nbr_meal_to_end)
 		ret = -1;
 	if (pthread_mutex_unlock(&philo->local_mutex))
 		return (1);

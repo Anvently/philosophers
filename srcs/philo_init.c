@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 10:33:04 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/24 15:44:53 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 17:01:32 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	assign_forks(int nbr_philo, t_philo *philos, pthread_mutex_t *forks)
 		return ;
 	philos[0].left_fork = &forks[nbr_philo - 1];
 	i = 0;
-	while (i < nbr_philo)
+	while (nbr_philo > 1 && i < nbr_philo)
 	{
 		if (i != 0)
 			philos[i].left_fork = &forks[i - 1];
@@ -75,7 +75,6 @@ static int	wait_start(t_settings *settings)
 		if (pthread_mutex_unlock(&settings->count_mutex))
 			return (pthread_mutex_unlock(&settings->begin_mutex), 1);
 	}
-	printf("BEGIN\n");
 	gettimeofday(&settings->begin_time, NULL);
 	if (pthread_mutex_unlock(&settings->begin_mutex))
 		return (1);
@@ -93,6 +92,7 @@ int	philo_start(t_settings *settings, t_philo *philos,
 		|| pthread_mutex_lock(&settings->begin_mutex))
 		return (error("error initializing mutex"), 1);
 	assign_forks(settings->nbr_philo, philos, forks);
+	philo_print(settings->nbr_philo, philos);
 	if (init_philos(settings, philos)
 		|| pthread_create(&monitor_tid, NULL, philo_monitor, philos))
 		return (1);
