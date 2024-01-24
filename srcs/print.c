@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:48:18 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/23 15:04:24 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 14:22:47 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,9 @@ int	print_msg(t_philo *philo, int action)
 {
 	t_timeval	time;
 
-	if (pthread_mutex_lock(philo->print_mutex))
+	if (philo_is_dead(philo))
+		return (0);
+	if (pthread_mutex_lock(&philo->settings->print_mutex))
 		return (1);
 	gettimeofday(&time, NULL);
 	color(philo);
@@ -64,7 +66,7 @@ int	print_msg(t_philo *philo, int action)
 		philo->number);
 	print_msg_type(action);
 	printf(CL_RS);
-	if (pthread_mutex_unlock(philo->print_mutex))
+	if (pthread_mutex_unlock(&philo->settings->print_mutex))
 		return (1);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:27:12 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/23 14:41:39 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 15:47:48 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,17 +32,18 @@ bool	check_time(t_timeval *last_time, int max)
 	t_timeval	time;
 
 	gettimeofday(&time, NULL);
-	/* dprintf(2, "Last time: sec = %ld | usec = %ld\n"
-		"Time: sec = %ld | usec = %ld", last_time->tv_sec,
-		last_time->tv_usec, time.tv_sec, time.tv_usec); */
 	if (time.tv_sec == last_time->tv_sec)
 	{
 		if ((time.tv_usec - last_time->tv_usec) >= (long)(max * 1000))
 			return (true);
 		return (false);
 	}
-	if ((time.tv_sec - last_time->tv_sec) * 1000 >= max)
+	else if ((time.tv_sec - last_time->tv_sec > 1)
+		&& ((time.tv_sec - last_time->tv_sec) * 1000 >= max))
+		return (true);
+	else if ((time.tv_sec - last_time->tv_sec == 1)
+		&& (time.tv_usec + (1000000 - last_time->tv_usec))
+		>= (long)(max * 1000))
 		return (true);
 	return (false);
-
 }

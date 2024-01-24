@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 09:59:49 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/23 17:33:55 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 15:47:41 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ int	main(int argc, char **argv)
 	t_philo			*philos;
 	t_settings		settings;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	print_mutex;
 
 	if (argc < 5)
 		return (error("unsifficient number of arguments\n"
@@ -33,11 +32,10 @@ int	main(int argc, char **argv)
 	memset(&settings, 0, sizeof(t_settings));
 	if (parse_settings(&settings, argv + 1, argc))
 		return (1);
-	print_settings(&settings);
 	philos = NULL;
 	forks = NULL;
 	if (philo_alloc(&settings, &philos) || fork_alloc(&settings, &forks)
-		|| philo_start(&settings, philos, forks, &print_mutex))
+		|| philo_start(&settings, philos, forks))
 		return (philo_free(&settings, &philos, &forks), 1);
 	philo_free(&settings, &philos, &forks);
 	return (0);

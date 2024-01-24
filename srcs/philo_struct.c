@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:57:48 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/23 17:39:20 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 14:23:19 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ void	philo_free(t_settings *settings, t_philo **philos_ptr,
 		free(*forks_ptr);
 	}
 	pthread_mutex_destroy(&settings->count_mutex);
+	pthread_mutex_destroy(&settings->begin_mutex);
+	pthread_mutex_destroy(&settings->print_mutex);
 	*forks_ptr = NULL;
 }
 
@@ -81,8 +83,7 @@ void	philo_print(int nbr_philo, t_philo *philos)
 			"%10$-*1$s : %11$*1$d\n"
 			"%12$-*1$s : %13$*1$lu\n"
 			"%14$-*1$s : %15$*1$p\n"
-			"%16$-*1$s : %17$*1$p\n"
-			"%18$-*1$s : %19$*1$p\n\n",
+			"%16$-*1$s : %17$*1$p\n\n",
 			20, "Philosopher number", philos[i].number,
 			"Is dead", philos[i].is_dead,
 			"Last sleep (us)", philos[i].last_sleep.tv_usec,
@@ -90,8 +91,7 @@ void	philo_print(int nbr_philo, t_philo *philos)
 			"Number of meals", philos[i].nbr_meals,
 			"Thread id", philos[i].thread,
 			"Left fork", philos[i].left_fork,
-			"Right fork", philos[i].right_fork,
-			"Print mutex", philos[i].print_mutex);
+			"Right fork", philos[i].right_fork);
 		i++;
 	}
 }

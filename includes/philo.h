@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 10:01:11 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/23 18:08:49 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 15:17:10 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ typedef struct s_settings {
 	t_timeval		begin_time;
 	pthread_mutex_t	count_mutex;
 	pthread_mutex_t	begin_mutex;
+	pthread_mutex_t	print_mutex;
 	int				count;
-	bool			begin;
 }				t_settings;
 
 typedef struct s_philo {
@@ -71,7 +71,6 @@ typedef struct s_philo {
 	t_settings			*settings;
 	pthread_mutex_t		*right_fork;
 	pthread_mutex_t		*left_fork;
-	pthread_mutex_t		*print_mutex;
 	pthread_mutex_t		local_mutex;
 }						t_philo;
 
@@ -85,7 +84,7 @@ int		fork_alloc(t_settings *settings, pthread_mutex_t **forks_ptr);
 void	philo_free(t_settings *settings, t_philo **philos_ptr,
 			pthread_mutex_t **forks_ptr);
 int		philo_start(t_settings *settings, t_philo *philos,
-			pthread_mutex_t *forks, pthread_mutex_t *print_mutex);
+			pthread_mutex_t *forks);
 void	philo_print(int nbr_philo, t_philo *philos);
 void	*philo_monitor(void *data);
 

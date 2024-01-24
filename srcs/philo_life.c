@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 16:24:52 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/23 18:27:54 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 14:42:49 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ bool	philo_is_dead(t_philo *philo)
 		philo->is_dead = true;
 		return (true);
 	}
-	return (false);
+	return (ret);
 }
 
 static int	philo_eat(t_philo *philo)
@@ -60,9 +60,13 @@ static int	philo_eat(t_philo *philo)
 	gettimeofday(&philo->last_meal, NULL);
 	philo->nbr_meals++;
 	if (philo->nbr_meals == philo->settings->nbr_meal_to_end)
+	{
+		if (pthread_mutex_unlock(&philo->local_mutex))
+			return (philo_die(philo), 1);
 		if (print_msg(philo, msg_ended))
-			return (pthread_mutex_unlock(&philo->local_mutex),
-				philo_die(philo), 1);
+			return (philo_die(philo), 1);
+		return (0);
+	}
 	if (pthread_mutex_unlock(&philo->local_mutex))
 		return (philo_die(philo), 1);
 	return (0);
@@ -87,8 +91,6 @@ void	*philo_routine(void *data)
 	t_philo			*philo;
 
 	philo = (t_philo *)data;
-	/* if (print_msg(philo, msg_created))
-		return (philo_die(philo), NULL); */
 	if (pthread_mutex_lock(&philo->settings->count_mutex)
 		|| !(++philo->settings->count)
 		|| pthread_mutex_unlock(&philo->settings->count_mutex))

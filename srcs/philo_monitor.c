@@ -6,11 +6,12 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 17:09:47 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/23 18:36:37 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/24 15:31:23 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
+#include <stdio.h>
 
 static int	join_threads(t_settings *settings, t_philo *philos)
 {
@@ -33,6 +34,8 @@ static int	philo_check_status(t_philo *philo)
 	ret = 0;
 	if (pthread_mutex_lock(&philo->local_mutex))
 		return (1);
+	if (philo->is_dead)
+		return (pthread_mutex_unlock(&philo->local_mutex), 1);
 	if (philo->last_meal.tv_sec == 0)
 			philo->last_meal = philo->settings->begin_time;
 	if (check_time(&philo->last_meal, philo->settings->time_to_die))
@@ -58,17 +61,17 @@ static int	check_all_philos(t_settings *settings, t_philo *philos)
 {
 	int		i;
 	int		ret;
-	bool	is_end;
+	int		is_end;
 
 	i = 0;
-	is_end = true;
+	is_end = 1;
 	while (i < settings->nbr_philo)
 	{
 		ret = philo_check_status(&philos[i++]);
 		if (ret > 0)
 			return (1);
 		else if (ret < 0)
-			is_end = false;
+			is_end = 0;
 	}
 	return (is_end);
 }
@@ -86,10 +89,12 @@ void	*philo_monitor(void *data)
 	while (1)
 	{
 		if (check_all_philos(settings, philos))
-			return (kill_all(settings, philos), NULL);
+		{
+			kill_all(settings, philos);
+			join_threads(settings, philos);
+			return (NULL);
+		}
 		continue ;
 	}
-	if (join_threads(settings, philos))
-		return (NULL);
 	return (NULL);
 }
