@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 10:33:04 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/24 17:01:32 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/25 11:15:24 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ int	philo_start(t_settings *settings, t_philo *philos,
 		|| pthread_mutex_lock(&settings->begin_mutex))
 		return (error("error initializing mutex"), 1);
 	assign_forks(settings->nbr_philo, philos, forks);
-	philo_print(settings->nbr_philo, philos);
 	if (init_philos(settings, philos)
 		|| pthread_create(&monitor_tid, NULL, philo_monitor, philos))
 		return (1);

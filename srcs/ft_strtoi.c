@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 16:36:32 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/22 16:55:06 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/25 11:17:17 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ static int	increment_nbr(int *dest, int sign, char c)
 /// @param dest int receiving the conversion.
 /// @return ```0``` if no error occured. ```1``` if overflow.
 /// ```2``` if no digit was found at the beginning.
+/// ```3``` negative number
 int	ft_strtoi(const char *str, int *dest)
 {
 	size_t	i;
@@ -82,5 +83,7 @@ int	ft_strtoi(const char *str, int *dest)
 		if (increment_nbr(dest, sign, str[i++]))
 			return (1);
 	*dest = sign * *dest;
+	if (*dest < 0)
+		return (3);
 	return (0);
 }
