@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 16:24:52 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/24 17:21:02 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/25 15:05:14 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ static int	philo_sleep(t_philo *philo)
 	usleep(philo->settings->sleep_duration * 1000);
 	if (philo_is_dead(philo))
 		return (1);
-	gettimeofday(&philo->last_sleep, NULL);
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:57:48 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/24 14:23:19 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/25 17:16:39 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,14 +79,12 @@ void	philo_print(int nbr_philo, t_philo *philos)
 		printf("%2$-*1$s : %3$*1$d\n"
 			"%4$-*1$s : %5$*1$d\n"
 			"%6$-*1$s : %7$*1$ld\n"
-			"%8$-*1$s : %9$*1$ld\n"
-			"%10$-*1$s : %11$*1$d\n"
-			"%12$-*1$s : %13$*1$lu\n"
-			"%14$-*1$s : %15$*1$p\n"
-			"%16$-*1$s : %17$*1$p\n\n",
+			"%8$-*1$s : %9$*1$d\n"
+			"%10$-*1$s : %11$*1$lu\n"
+			"%12$-*1$s : %13$*1$p\n"
+			"%14$-*1$s : %15$*1$p\n\n",
 			20, "Philosopher number", philos[i].number,
 			"Is dead", philos[i].is_dead,
-			"Last sleep (us)", philos[i].last_sleep.tv_usec,
 			"Last meal (us)", philos[i].last_meal.tv_usec,
 			"Number of meals", philos[i].nbr_meals,
 			"Thread id", philos[i].thread,

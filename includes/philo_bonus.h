@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 10:01:11 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/25 15:04:52 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/25 18:44:27 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
 
 # include <unistd.h>
 # include <sys/time.h>
-# include <pthread.h>
+# include <semaphore.h>
 # include <stdbool.h>
 
 # define NBR_PHILO 3
@@ -53,48 +53,44 @@ typedef struct s_settings {
 	int				sleep_duration;
 	int				nbr_meal_to_end;
 	t_timeval		begin_time;
-	pthread_mutex_t	count_mutex;
-	pthread_mutex_t	begin_mutex;
-	pthread_mutex_t	print_mutex;
-	int				count;
 }				t_settings;
 
 typedef struct s_philo {
 	int					number;
 	t_timeval			last_meal;
 	int					nbr_meals;
-	pthread_t			thread;
-	bool				is_dead;
 	bool				has_left_fork;
-	bool				has_right_fork;
-	t_settings			*settings;
-	pthread_mutex_t		*right_fork;
-	pthread_mutex_t		*left_fork;
-	pthread_mutex_t		local_mutex;
+	t_settings			settings;
+	char				*sem_local_name;
+	char				*sem_tready_name;
+	pid_t				*ids;
+	sem_t				*sem_forks;
+	sem_t				*sem_start;
+	sem_t				*sem_pready;
+	sem_t				*sem_tready;
+	sem_t				*sem_print;
+	sem_t				*sem_local;
+	sem_t				*sem_eaten_enough;
 }						t_philo;
 
 int		ft_strtoi(const char *str, int *dest);
+char	*ft_itoa(int n);
+char	*ft_strjoin(char const *s1, char const *s2);
 int		parse_settings(t_settings *settings, char **args, int argc);
 
 void	error(char *str);
 
-int		philo_alloc(t_settings *settings, t_philo **philos_ptr);
-int		fork_alloc(t_settings *settings, pthread_mutex_t **forks_ptr);
-void	philo_free(t_settings *settings, t_philo **philos_ptr,
-			pthread_mutex_t **forks_ptr);
-int		philo_start(t_settings *settings, t_philo *philos,
-			pthread_mutex_t *forks);
-void	philo_print(int nbr_philo, t_philo *philos);
-void	*philo_monitor(void *data);
-
 void	print_settings(t_settings *settings);
-int		print_msg(t_philo *philo, int action);
+int		print_msg(t_philo *philo, t_timeval *time, int action);
 
-void	*philo_routine(void *data);
-void	philo_die(t_philo *philo);
-bool	philo_is_dead(t_philo *philo);
-bool	check_time(t_timeval *last_time, int max);
-int		take_both_forks(t_philo *philo);
-int		unlock_forks(t_philo *philo);
+bool	check_time(t_timeval *time, t_timeval *last_time, int max);
+
+int		philo_start(t_philo *philo);
+void	philo_routine(t_philo *philo);
+int		init_monitor(t_philo *philo);
+int		init_end_monitor(t_philo *philo);
+void	free_philo(t_philo *philo);
+void	free_exit(t_philo *philo, int status);
+void	kill_all(pid_t *ids, int nbr_philo);
 
 #endif
