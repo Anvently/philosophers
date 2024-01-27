@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 09:59:49 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/25 18:55:13 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/27 13:09:00 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,23 @@
 
 static int	init_sem(t_philo *philo)
 {
+	int	i;
+
 	errno = 0;
-	philo->sem_eaten_enough = sem_open("eaten_enough", O_CREAT, 0600, 0);
-	philo->sem_forks = sem_open("forks", O_CREAT, 0600,
-			philo->settings.nbr_philo / 2);
-	philo->sem_pready = sem_open("pready", O_CREAT, 0600, 0);
-	philo->sem_print = sem_open("print", O_CREAT, 0600, 0);
-	philo->sem_start = sem_open("start", O_CREAT, 0600, 0);
+	philo->sem_eaten_enough = sem_open("/eaten_enough", O_CREAT, 0600, 0);
+	philo->sem_forks = sem_open("/forks", O_CREAT, 0600, 0);
+	i = 0;
+	while (i < philo->settings.nbr_philo / 2)
+	{
+		if (sem_post(philo->sem_forks))
+			return (1);
+		i++;
+	}
+	philo->sem_pready = sem_open("/pready", O_CREAT, 0600, 0);
+	philo->sem_print = sem_open("/print", O_CREAT, 0600, 0);
+	if (sem_post(philo->sem_print))
+		return (1);
+	philo->sem_start = sem_open("/start", O_CREAT, 0600, 0);
 	if (philo->sem_eaten_enough == SEM_FAILED
 		|| philo->sem_forks == SEM_FAILED
 		|| philo->sem_pready == SEM_FAILED
@@ -97,6 +107,7 @@ int	main(int argc, char **argv)
 {
 	t_philo		philo;
 
+	printf("PID = %d", getpid());
 	if (argc < 5)
 		return (error("unsifficient number of arguments\n"
 				"number_of_philosophers time_to_die time_to_eat time_to_sleep"

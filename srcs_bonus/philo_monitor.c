@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 15:10:56 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/25 18:29:00 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/27 12:59:06 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,9 @@ static void	*philo_monitor(void *data)
 	philo = (t_philo *)data;
 	if (sem_post(philo->sem_tready))
 		free_exit(philo, 1);
+	if (sem_wait(philo->sem_start))
+		free_exit(philo, 1);
+	gettimeofday(&philo->last_meal, NULL);
 	while (1)
 	{
 		ret = check_death(philo);

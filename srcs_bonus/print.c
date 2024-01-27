@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:48:18 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/25 18:07:17 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/27 12:53:50 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ int	print_msg(t_philo *philo, t_timeval *time, int action)
 		return (1);
 	color(philo);
 	printf("%ld : Philosopher %d",
-		(time->tv_sec - philo->settings.begin_time.tv_sec) * 1000
-		+ (time->tv_usec - philo->settings.begin_time.tv_usec) / 1000,
+		(time->tv_sec - philo->begin_time.tv_sec) * 1000
+		+ (time->tv_usec - philo->begin_time.tv_usec) / 1000,
 		philo->number);
 	print_msg_type(action);
 	printf(CL_RS);

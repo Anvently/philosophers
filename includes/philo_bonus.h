@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 10:01:11 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/25 18:44:27 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/27 13:40:41 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,13 @@ typedef struct s_settings {
 	int				meal_duration;
 	int				sleep_duration;
 	int				nbr_meal_to_end;
-	t_timeval		begin_time;
 }				t_settings;
 
 typedef struct s_philo {
 	int					number;
 	t_timeval			last_meal;
+	t_timeval			begin_time;
 	int					nbr_meals;
-	bool				has_left_fork;
 	t_settings			settings;
 	char				*sem_local_name;
 	char				*sem_tready_name;
@@ -84,6 +83,7 @@ void	print_settings(t_settings *settings);
 int		print_msg(t_philo *philo, t_timeval *time, int action);
 
 bool	check_time(t_timeval *time, t_timeval *last_time, int max);
+void	usleep_calc(t_timeval *start_time, int duration);
 
 int		philo_start(t_philo *philo);
 void	philo_routine(t_philo *philo);

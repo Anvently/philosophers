@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 13:31:35 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/25 18:56:14 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/27 13:43:09 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	philo_sleep(t_philo *philo)
 	gettimeofday(&time, NULL);
 	if (print_msg(philo, &time, msg_is_sleeping))
 		return (1);
-	usleep(1000 * philo->settings.sleep_duration);
+	usleep_calc(&time, philo->settings.sleep_duration);
 	return (0);
 }
 
@@ -59,7 +59,7 @@ static int	philo_eat(t_philo *philo)
 	philo->last_meal = time;
 	if (sem_post(philo->sem_local))
 		return (1);
-	usleep(1000 * philo->settings.meal_duration);
+	usleep_calc(&time, philo->settings.meal_duration);
 	if (sem_post(philo->sem_forks))
 		return (1);
 	if (philo->settings.nbr_meal_to_end >= 0
@@ -83,7 +83,7 @@ void	philo_routine(t_philo *philo)
 		free_exit(philo, 1);
 	if (sem_wait(philo->sem_start))
 		free_exit(philo, 1);
-	gettimeofday(&philo->last_meal, NULL);
+	gettimeofday(&philo->begin_time, NULL);
 	while (1)
 	{
 		if (philo_eat(philo))

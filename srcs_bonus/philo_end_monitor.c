@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 17:00:40 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/25 19:09:09 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/27 12:22:19 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ static void	check_end(t_philo *philo)
 			kill_all(philo->ids, philo->settings.nbr_philo);
 			free_exit(philo, 1);
 		}
+		usleep(10);
 	}
 }
 
@@ -37,6 +38,8 @@ static void	*philo_end_monitor(void *data)
 
 	philo = (t_philo *)data;
 	if (sem_post(philo->sem_print))
+		return (NULL);
+	if (sem_wait(philo->sem_start))
 		return (NULL);
 	check_end(philo);
 	return (NULL);
@@ -48,8 +51,5 @@ int	init_end_monitor(t_philo *philo)
 
 	if (pthread_create(&monitor_tid, NULL, philo_end_monitor, philo))
 		return (1);
-	if (sem_wait(philo->sem_start))
-		return (1);
-	printf("PING\n");
 	return (0);
 }
