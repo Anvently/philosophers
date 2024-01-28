@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 09:59:49 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/27 13:09:00 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/28 18:06:52 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,10 +95,6 @@ void	free_philo(t_philo *philo)
 {
 	free_sem(philo);
 	free_local_sem(philo);
-	if (philo->sem_local_name)
-		free(philo->sem_local_name);
-	if (philo->sem_tready_name)
-		free(philo->sem_tready_name);
 	if (philo->ids)
 		free(philo->ids);
 }

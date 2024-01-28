@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:41:43 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/27 12:58:03 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/28 18:05:40 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ static int	init_philo(int i, t_philo *philo)
 	if (philo->sem_local == SEM_FAILED
 		|| philo->sem_tready == SEM_FAILED)
 		return (1);
+	free(philo->sem_local_name);
+	free(philo->sem_tready_name);
 	return (0);
 }
 
@@ -94,8 +96,7 @@ static int	philo_wait(t_philo *philo, pid_t *ids)
 			return (1);
 		i++;
 	}
-	while (wait(&status))
-		continue ;
+	wait(&status);
 	kill_all(ids, philo->settings.nbr_philo);
 	return (0);
 }
