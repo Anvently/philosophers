@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 16:24:52 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/25 15:05:14 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/30 12:38:15 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,15 @@ void	philo_die(t_philo *philo)
 	pthread_mutex_unlock(&philo->local_mutex);
 }
 
-static int	philo_update_nbr_meals(t_philo *philo)
+static int	philo_update_nbr_meals(t_philo *philo, t_timeval *time)
 {
-	if (pthread_mutex_lock(&philo->local_mutex))
-		return (1);
+	pthread_mutex_lock(&philo->local_mutex);
 	philo->nbr_meals++;
 	if (philo->nbr_meals == philo->settings->nbr_meal_to_end)
 	{
 		if (pthread_mutex_unlock(&philo->local_mutex))
 			return (1);
-		if (print_msg(philo, msg_ended))
+		if (print_msg(philo, time, msg_ended))
 			return (1);
 		return (0);
 	}
@@ -42,29 +41,34 @@ static int	philo_update_nbr_meals(t_philo *philo)
 
 static int	philo_eat(t_philo *philo)
 {
+	t_timeval	time;
+
 	if (take_both_forks(philo))
 		return (1);
-	if (print_msg(philo, msg_is_eating))
+	gettimeofday(&time, NULL);
+	if (print_msg(philo, &time, msg_is_eating)
+		|| pthread_mutex_lock(&philo->local_mutex))
+		return (1);
+	philo->last_meal = time;
+	if (pthread_mutex_unlock(&philo->local_mutex))
 		return (philo_die(philo), 1);
-	if (pthread_mutex_lock(&philo->local_mutex)
-		|| gettimeofday(&philo->last_meal, NULL)
-		|| pthread_mutex_unlock(&philo->local_mutex))
-		return (philo_die(philo), 1);
-	usleep(philo->settings->meal_duration * 1000);
+	usleep_calc(&time, philo->settings->meal_duration);
 	if (unlock_forks(philo))
 		return (philo_die(philo), 1);
-	if (philo_is_dead(philo))
-		return (1);
-	if (philo_update_nbr_meals(philo))
+	gettimeofday(&time, NULL);
+	if (philo_update_nbr_meals(philo, &time))
 		return (philo_die(philo), 1);
 	return (0);
 }
 
 static int	philo_sleep(t_philo *philo)
 {
-	if (print_msg(philo, msg_is_sleeping))
+	t_timeval	time;
+
+	gettimeofday(&time, NULL);
+	if (print_msg(philo, &time, msg_is_sleeping))
 		return (philo_die(philo), 1);
-	usleep(philo->settings->sleep_duration * 1000);
+	usleep_calc(&time, philo->settings->sleep_duration);
 	if (philo_is_dead(philo))
 		return (1);
 	return (0);
@@ -76,6 +80,7 @@ static int	philo_sleep(t_philo *philo)
 void	*philo_routine(void *data)
 {
 	t_philo			*philo;
+	t_timeval		time;
 
 	philo = (t_philo *)data;
 	if (pthread_mutex_lock(&philo->settings->count_mutex)
@@ -91,7 +96,8 @@ void	*philo_routine(void *data)
 			return (NULL);
 		if (philo_is_dead(philo) || philo_sleep(philo))
 			return (NULL);
-		if (philo_is_dead(philo) || print_msg(philo, msg_is_thinking))
+		gettimeofday(&time, NULL);
+		if (philo_is_dead(philo) || print_msg(philo, &time, msg_is_thinking))
 			return (NULL);
 	}
 	return (NULL);

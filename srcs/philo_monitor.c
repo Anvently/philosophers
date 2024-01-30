@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 17:09:47 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/24 17:05:24 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/30 13:14:33 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ static int	join_threads(t_settings *settings, t_philo *philos)
 
 static int	philo_check_status(t_philo *philo)
 {
-	int	ret;
+	int			ret;
+	t_timeval	time;
 
 	ret = 0;
 	if (pthread_mutex_lock(&philo->local_mutex))
@@ -38,9 +39,10 @@ static int	philo_check_status(t_philo *philo)
 		return (pthread_mutex_unlock(&philo->local_mutex), 1);
 	if (philo->last_meal.tv_sec == 0)
 			philo->last_meal = philo->settings->begin_time;
+	gettimeofday(&time, NULL);
 	if (check_time(&philo->last_meal, philo->settings->time_to_die))
 		return (pthread_mutex_unlock(&philo->local_mutex),
-			print_msg(philo, msg_died), 1);
+			print_msg(philo, &time, msg_died), 1);
 	if (philo->settings->nbr_meal_to_end < 0
 		|| philo->nbr_meals < philo->settings->nbr_meal_to_end)
 		ret = -1;
@@ -95,6 +97,7 @@ void	*philo_monitor(void *data)
 			join_threads(settings, philos);
 			return (NULL);
 		}
+		usleep(10);
 		continue ;
 	}
 	return (NULL);

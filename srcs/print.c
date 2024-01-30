@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:48:18 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/24 17:26:20 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/30 12:33:09 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,19 +50,16 @@ static void	color(t_philo *philo)
 		printf(CL_6);
 }
 
-int	print_msg(t_philo *philo, int action)
+int	print_msg(t_philo *philo, t_timeval *time, int action)
 {
-	t_timeval	time;
-
 	if (pthread_mutex_lock(&philo->settings->print_mutex))
 		return (1);
 	if (philo_is_dead(philo))
 		return (pthread_mutex_unlock(&philo->settings->print_mutex), 0);
-	gettimeofday(&time, NULL);
 	color(philo);
 	printf("%ld : Philosopher %d",
-		(time.tv_sec - philo->settings->begin_time.tv_sec) * 1000
-		+ (time.tv_usec - philo->settings->begin_time.tv_usec) / 1000,
+		(time->tv_sec - philo->settings->begin_time.tv_sec) * 1000
+		+ (time->tv_usec - philo->settings->begin_time.tv_usec) / 1000,
 		philo->number);
 	print_msg_type(action);
 	printf(CL_RS);

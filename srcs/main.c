@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 09:59:49 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/27 13:08:45 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/30 13:10:12 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	main(int argc, char **argv)
 {
 	t_philo			*philos;
 	t_settings		settings;
-	pthread_mutex_t	*forks;
+	t_fork			*forks;
 
 	if (argc < 5)
 		return (error("unsifficient number of arguments\n"

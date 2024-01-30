@@ -6,14 +6,14 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 10:33:04 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/25 11:15:24 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/30 12:54:33 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 #include <stdio.h>
 
-static void	assign_forks(int nbr_philo, t_philo *philos, pthread_mutex_t *forks)
+static void	assign_forks(int nbr_philo, t_philo *philos, t_fork *forks)
 {
 	int	i;
 
@@ -81,8 +81,7 @@ static int	wait_start(t_settings *settings)
 	return (0);
 }
 
-int	philo_start(t_settings *settings, t_philo *philos,
-			pthread_mutex_t *forks)
+int	philo_start(t_settings *settings, t_philo *philos, t_fork *forks)
 {
 	pthread_t	monitor_tid;
 

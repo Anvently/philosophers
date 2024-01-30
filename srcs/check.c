@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:27:12 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/24 17:16:22 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/30 12:30:12 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,4 +68,29 @@ bool	philo_is_dead(t_philo *philo)
 		return (true);
 	}
 	return (ret);
+}
+
+void	usleep_calc(t_timeval *start_time, int duration)
+{
+	t_timeval	time;
+	int			diff_sec;
+	long		diff_usec;
+	long long	sleep_time;
+
+	gettimeofday(&time, NULL);
+	diff_sec = time.tv_sec - start_time->tv_sec;
+	if (diff_sec)
+	{
+		diff_usec = (1000000 - start_time->tv_usec) + time.tv_usec;
+		sleep_time = duration * 1000 - (diff_sec * 1000000 + diff_usec);
+		if (usleep(sleep_time))
+			usleep(sleep_time);
+	}
+	else
+	{
+		diff_usec = time.tv_usec - start_time->tv_usec;
+		sleep_time = duration * 1000 - diff_usec;
+		if (sleep_time > 0)
+			usleep(sleep_time);
+	}
 }

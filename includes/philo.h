@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 10:01:11 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/25 15:04:52 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/30 13:10:49 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,11 @@ typedef struct s_settings {
 	int				count;
 }				t_settings;
 
+typedef struct s_fork {
+	pthread_mutex_t		mutex;
+	int					last_id;
+}						t_fork;
+
 typedef struct s_philo {
 	int					number;
 	t_timeval			last_meal;
@@ -68,8 +73,8 @@ typedef struct s_philo {
 	bool				has_left_fork;
 	bool				has_right_fork;
 	t_settings			*settings;
-	pthread_mutex_t		*right_fork;
-	pthread_mutex_t		*left_fork;
+	t_fork				*right_fork;
+	t_fork				*left_fork;
 	pthread_mutex_t		local_mutex;
 }						t_philo;
 
@@ -79,21 +84,21 @@ int		parse_settings(t_settings *settings, char **args, int argc);
 void	error(char *str);
 
 int		philo_alloc(t_settings *settings, t_philo **philos_ptr);
-int		fork_alloc(t_settings *settings, pthread_mutex_t **forks_ptr);
+int		fork_alloc(t_settings *settings, t_fork **forks_ptr);
 void	philo_free(t_settings *settings, t_philo **philos_ptr,
-			pthread_mutex_t **forks_ptr);
-int		philo_start(t_settings *settings, t_philo *philos,
-			pthread_mutex_t *forks);
+			t_fork **forks_ptr);
+int		philo_start(t_settings *settings, t_philo *philos, t_fork *forks);
 void	philo_print(int nbr_philo, t_philo *philos);
 void	*philo_monitor(void *data);
 
 void	print_settings(t_settings *settings);
-int		print_msg(t_philo *philo, int action);
+int		print_msg(t_philo *philo, t_timeval *time, int action);
 
 void	*philo_routine(void *data);
 void	philo_die(t_philo *philo);
 bool	philo_is_dead(t_philo *philo);
 bool	check_time(t_timeval *last_time, int max);
+void	usleep_calc(t_timeval *start_time, int duration);
 int		take_both_forks(t_philo *philo);
 int		unlock_forks(t_philo *philo);
 

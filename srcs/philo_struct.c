@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:57:48 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/25 17:16:39 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/30 13:03:28 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,18 @@ int	philo_alloc(t_settings *settings, t_philo **philos_ptr)
 	return (0);
 }
 
-int	fork_alloc(t_settings *settings, pthread_mutex_t **forks_ptr)
+int	fork_alloc(t_settings *settings, t_fork **forks_ptr)
 {
 	int	i;
 
-	*forks_ptr = malloc(sizeof(pthread_mutex_t) * settings->nbr_philo);
+	*forks_ptr = malloc(sizeof(t_fork) * settings->nbr_philo);
 	if (!*forks_ptr)
 		return (error("allocation error"), errno);
-	memset(*forks_ptr, 0, sizeof(pthread_mutex_t) * settings->nbr_philo);
+	memset(*forks_ptr, 0, sizeof(t_fork) * settings->nbr_philo);
 	i = 0;
 	while (i < settings->nbr_philo)
 	{
-		if (pthread_mutex_init(&(*forks_ptr)[i], NULL))
+		if (pthread_mutex_init(&((*forks_ptr)[i]).mutex, NULL))
 			return (1);
 		i++;
 	}
@@ -44,7 +44,7 @@ int	fork_alloc(t_settings *settings, pthread_mutex_t **forks_ptr)
 }
 
 void	philo_free(t_settings *settings, t_philo **philos_ptr,
-			pthread_mutex_t **forks_ptr)
+			t_fork **forks_ptr)
 {
 	int	i;
 
@@ -60,7 +60,7 @@ void	philo_free(t_settings *settings, t_philo **philos_ptr,
 	{
 		i = 0;
 		while (i < settings->nbr_philo)
-			pthread_mutex_destroy(&(*forks_ptr)[i++]);
+			pthread_mutex_destroy(&((*forks_ptr)[i++]).mutex);
 		free(*forks_ptr);
 	}
 	pthread_mutex_destroy(&settings->count_mutex);
