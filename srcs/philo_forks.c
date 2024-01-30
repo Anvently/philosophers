@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:51:06 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/30 13:08:56 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/30 18:12:49 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,23 @@ static int	take_fork(t_philo *philo, t_fork *fork, bool *has_fork)
 {
 	t_timeval	time;
 
-	while (fork->last_id == philo->number)
+	while (1)
+	{
 		usleep(10);
-	if (pthread_mutex_lock(&fork->mutex))
-		return (1);
-	gettimeofday(&time, NULL);
-	fork->last_id = philo->number;
-	*has_fork = true;
-	print_msg(philo, &time, msg_fork_taken);
+		if (pthread_mutex_lock(&fork->mutex))
+			return (1);
+		if (fork->last_id == philo->number)
+		{
+			if (pthread_mutex_unlock(&fork->mutex))
+				return (1);
+			continue ;
+		}
+		gettimeofday(&time, NULL);
+		fork->last_id = philo->number;
+		*has_fork = true;
+		print_msg(philo, &time, msg_fork_taken);
+		break ;
+	}
 	return (0);
 }
 

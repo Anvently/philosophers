@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:57:48 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/30 13:03:28 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/30 18:04:04 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	fork_alloc(t_settings *settings, t_fork **forks_ptr)
 	i = 0;
 	while (i < settings->nbr_philo)
 	{
-		if (pthread_mutex_init(&((*forks_ptr)[i]).mutex, NULL))
+		if (pthread_mutex_init(&(*forks_ptr)[i].mutex, NULL))
 			return (1);
 		i++;
 	}

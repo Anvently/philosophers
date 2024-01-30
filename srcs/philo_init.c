@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 10:33:04 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/30 12:54:33 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/30 18:05:08 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ static int	wait_start(t_settings *settings)
 {
 	while (1)
 	{
+		usleep(100);
 		if (pthread_mutex_lock(&settings->count_mutex))
 			return (pthread_mutex_unlock(&settings->begin_mutex), 1);
 		if (settings->count == settings->nbr_philo)
