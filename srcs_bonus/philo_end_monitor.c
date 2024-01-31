@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 17:00:40 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/27 12:22:19 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/31 18:07:31 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-static void	check_end(t_philo *philo)
+bool	philo_is_dead(t_philo *philo)
+{
+	if (sem_wait(philo->sem_local))
+		return (true);
+	if (philo->is_dead)
+		return (true);
+	if (sem_post(philo->sem_local))
+		return (true);
+	return (false);
+}
+
+static void	*check_end(t_philo *philo)
 {
 	int	count;
 
@@ -25,11 +36,12 @@ static void	check_end(t_philo *philo)
 		count--;
 		if (count == 0)
 		{
-			kill_all(philo->ids, philo->settings.nbr_philo);
-			free_exit(philo, 1);
+			kill_all(philo->ids, philo);
+			break ;
 		}
 		usleep(10);
 	}
+	return (NULL);
 }
 
 static void	*philo_end_monitor(void *data)
@@ -45,11 +57,23 @@ static void	*philo_end_monitor(void *data)
 	return (NULL);
 }
 
-int	init_end_monitor(t_philo *philo)
+void	kill_end_monitor(t_philo *philo)
+{
+	int	i;
+
+	i = 0;
+	while (i < philo->settings.nbr_philo)
+	{
+		sem_post(philo->sem_eaten_enough);
+		i++;
+	}
+}
+
+pthread_t	init_end_monitor(t_philo *philo)
 {
 	pthread_t	monitor_tid;
 
 	if (pthread_create(&monitor_tid, NULL, philo_end_monitor, philo))
-		return (1);
-	return (0);
+		return (0);
+	return (monitor_tid);
 }

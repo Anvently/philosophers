@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 10:01:11 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/27 13:40:41 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/31 18:04:33 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <sys/time.h>
 # include <semaphore.h>
 # include <stdbool.h>
+# include <pthread.h>
 
 # define NBR_PHILO 3
 # define MEAL_DURATION 50
@@ -24,14 +25,14 @@
 # define TIME_TO_DIE 500
 # define NBR_MEAL_TO_END 10
 
-# define CL_0 "\033[0;30m"
-# define CL_1 "\033[0;31m"
-# define CL_2 "\033[0;32m"
-# define CL_3 "\033[0;33m"
-# define CL_4 "\033[0;34m"
-# define CL_5 "\033[0;35m"
-# define CL_6 "\033[0;36m"
-# define CL_RS "\033[1;0m"
+# define CL_0 "\001\033[0;30m\002"
+# define CL_1 "\001\033[0;31m\002"
+# define CL_2 "\001\033[0;32m\002"
+# define CL_3 "\001\033[0;33m\002"
+# define CL_4 "\001\033[0;34m\002"
+# define CL_5 "\001\033[0;35m\002"
+# define CL_6 "\001\033[0;36m\002"
+# define CL_RS "\033[0m"
 
 typedef enum e_msg_type
 {
@@ -58,7 +59,9 @@ typedef struct s_philo {
 	int					number;
 	t_timeval			last_meal;
 	t_timeval			begin_time;
+	t_timeval			last_sleep;
 	int					nbr_meals;
+	bool				is_dead;
 	t_settings			settings;
 	char				*sem_local_name;
 	char				*sem_tready_name;
@@ -72,25 +75,28 @@ typedef struct s_philo {
 	sem_t				*sem_eaten_enough;
 }						t_philo;
 
-int		ft_strtoi(const char *str, int *dest);
-char	*ft_itoa(int n);
-char	*ft_strjoin(char const *s1, char const *s2);
-int		parse_settings(t_settings *settings, char **args, int argc);
+int			ft_strtoi(const char *str, int *dest);
+char		*ft_itoa(int n);
+char		*ft_strjoin(char const *s1, char const *s2);
+int			parse_settings(t_settings *settings, char **args, int argc);
 
-void	error(char *str);
+void		error(char *str);
 
-void	print_settings(t_settings *settings);
-int		print_msg(t_philo *philo, t_timeval *time, int action);
+void		print_settings(t_settings *settings);
+int			print_msg(t_philo *philo, t_timeval *time, int action);
 
-bool	check_time(t_timeval *time, t_timeval *last_time, int max);
-void	usleep_calc(t_timeval *start_time, int duration);
+bool		check_time(t_timeval *time, t_timeval *last_time, int max);
+void		usleep_calc(t_timeval *start_time, int duration);
 
-int		philo_start(t_philo *philo);
-void	philo_routine(t_philo *philo);
-int		init_monitor(t_philo *philo);
-int		init_end_monitor(t_philo *philo);
-void	free_philo(t_philo *philo);
-void	free_exit(t_philo *philo, int status);
-void	kill_all(pid_t *ids, int nbr_philo);
+int			philo_start(t_philo *philo);
+void		philo_routine(t_philo *philo);
+bool		philo_is_dead(t_philo *philo);
+int			init_sem(t_philo *philo);
+int			init_monitor(t_philo *philo);
+pthread_t	init_end_monitor(t_philo *philo);
+void		kill_end_monitor(t_philo *philo);
+void		free_philo(t_philo *philo);
+void		free_exit(t_philo *philo, int status);
+void		kill_all(pid_t *ids, t_philo *philo);
 
 #endif

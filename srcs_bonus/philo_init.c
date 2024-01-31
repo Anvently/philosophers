@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:41:43 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/28 18:05:40 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/31 17:42:27 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 static int	init_philo(int i, t_philo *philo)
 {
 	char	*nbr_str;
+	int		err;
 
 	philo->number = i + 1;
 	nbr_str = ft_itoa(i);
@@ -31,18 +32,22 @@ static int	init_philo(int i, t_philo *philo)
 		return (1);
 	philo->sem_local_name = ft_strjoin("/local_", nbr_str);
 	philo->sem_tready_name = ft_strjoin("/tready_", nbr_str);
-	if (!philo->sem_local_name || !philo->sem_tready_name)
-		return (free(nbr_str), 1);
-	philo->sem_local = sem_open(philo->sem_local_name, O_CREAT, 0600, 0);
-	if (sem_post(philo->sem_local))
-		return (1);
-	philo->sem_tready = sem_open(philo->sem_tready_name, O_CREAT, 0600, 0);
-	if (philo->sem_local == SEM_FAILED
-		|| philo->sem_tready == SEM_FAILED)
-		return (1);
+	free(nbr_str);
+	err = 0;
+	if (philo->sem_local_name && philo->sem_tready_name)
+	{
+		philo->sem_local = sem_open(philo->sem_local_name, O_CREAT, 0600, 0);
+		if (sem_post(philo->sem_local))
+			err = 1;
+		philo->sem_tready = sem_open(philo->sem_tready_name, O_CREAT, 0600, 0);
+		if (philo->sem_local == SEM_FAILED || philo->sem_tready == SEM_FAILED
+			|| sem_unlink(philo->sem_local_name)
+			|| sem_unlink(philo->sem_tready_name))
+			err = 1;
+	}
 	free(philo->sem_local_name);
 	free(philo->sem_tready_name);
-	return (0);
+	return (err);
 }
 
 static int	philo_fork(t_philo *philo, pid_t *ids)
@@ -70,14 +75,14 @@ static int	philo_fork(t_philo *philo, pid_t *ids)
 	return (id);
 }
 
-void	kill_all(pid_t *ids, int nbr_philo)
+void	kill_all(pid_t *ids, t_philo *philo)
 {
 	int	i;
 
 	i = 0;
-	while (i < nbr_philo && ids[i] != 0)
+	while (i < philo->settings.nbr_philo && ids[i] != 0)
 	{
-		kill(ids[i], SIGINT);
+		kill(ids[i], SIGKILL);
 		i++;
 	}
 }
@@ -97,14 +102,16 @@ static int	philo_wait(t_philo *philo, pid_t *ids)
 		i++;
 	}
 	wait(&status);
-	kill_all(ids, philo->settings.nbr_philo);
+	kill_all(ids, philo);
+	kill_end_monitor(philo);
 	return (0);
 }
 
 int	philo_start(t_philo *philo)
 {
-	pid_t	id;
-	pid_t	*ids;
+	pid_t		id;
+	pid_t		*ids;
+	pthread_t	monitor_tid;
 
 	ids = malloc(philo->settings.nbr_philo * sizeof(pid_t));
 	if (!ids || !memset(ids, 0, sizeof(pid_t) * philo->settings.nbr_philo))
@@ -117,10 +124,12 @@ int	philo_start(t_philo *philo)
 	}
 	else if (id > 0)
 	{
-		if (init_end_monitor(philo) || philo_wait(philo, ids))
-			return (kill_all(ids, philo->settings.nbr_philo), 1);
+		monitor_tid = init_end_monitor(philo);
+		if (!monitor_tid || philo_wait(philo, ids))
+			return (kill_all(ids, philo), 1);
+		pthread_join(monitor_tid, NULL);
 	}
 	else if (id < 0)
-		return (kill_all(ids, philo->settings.nbr_philo), 1);
+		return (kill_all(ids, philo), 1);
 	return (0);
 }

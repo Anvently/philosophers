@@ -14,7 +14,7 @@ SRCS_FILES	=	main.c error.c ft_strtoi.c parsing.c \
 
 SRCS_BONUS_FILES	=	main.c error.c ft_strtoi.c ft_itoa.c ft_strjoin.c parsing.c \
 						philo_end_monitor.c philo_monitor.c philo_init.c \
-						philo_life.c \
+						philo_life.c philo_data.c \
 						print.c time.c
 
 OBJS		=	$(addprefix $(OBJS_FOLDER),$(SRCS_FILES:.c=.o))

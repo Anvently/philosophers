@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 13:31:35 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/27 13:43:09 by npirard          ###   ########.fr       */
+/*   Updated: 2024/01/31 18:23:58 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,18 @@ static int	take_fork(t_philo *philo)
 
 static int	take_forks(t_philo *philo)
 {
+	t_timeval	time;
+
+	while (1)
+	{
+		gettimeofday(&time, NULL);
+		if (check_time(&time, &philo->last_sleep, 1) == false)
+			usleep(1000);
+		break ;
+	}
 	if (sem_wait(philo->sem_forks))
+		return (1);
+	if (philo_is_dead(philo))
 		return (1);
 	if (take_fork(philo))
 		return (1);
@@ -44,6 +55,7 @@ static int	philo_sleep(t_philo *philo)
 	if (print_msg(philo, &time, msg_is_sleeping))
 		return (1);
 	usleep_calc(&time, philo->settings.sleep_duration);
+	gettimeofday(&philo->last_sleep, NULL);
 	return (0);
 }
 
@@ -52,6 +64,8 @@ static int	philo_eat(t_philo *philo)
 	t_timeval	time;
 
 	if (take_forks(philo))
+		return (1);
+	if (philo_is_dead(philo))
 		return (1);
 	gettimeofday(&time, NULL);
 	if (print_msg(philo, &time, msg_is_eating) || sem_wait(philo->sem_local))
@@ -81,17 +95,20 @@ void	philo_routine(t_philo *philo)
 		free_exit(philo, 1);
 	if (sem_post(philo->sem_pready))
 		free_exit(philo, 1);
-	if (sem_wait(philo->sem_start))
+	if (sem_wait(philo->sem_start) || sem_wait(philo->sem_local))
 		free_exit(philo, 1);
 	gettimeofday(&philo->begin_time, NULL);
+	gettimeofday(&philo->last_meal, NULL);
+	if (sem_post(philo->sem_local))
+		free_exit(philo, 1);
 	while (1)
 	{
-		if (philo_eat(philo))
+		if (philo_is_dead(philo) || philo_eat(philo))
 			free_exit(philo, 1);
-		if (philo_sleep(philo))
+		if (philo_is_dead(philo) || philo_sleep(philo))
 			free_exit(philo, 1);
 		gettimeofday(&time, NULL);
-		if (print_msg(philo, &time, msg_is_thinking))
+		if (philo_is_dead(philo) || print_msg(philo, &time, msg_is_thinking))
 			free_exit(philo, 1);
 	}
 }
