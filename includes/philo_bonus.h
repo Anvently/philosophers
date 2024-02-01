@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 10:01:11 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/31 18:04:33 by npirard          ###   ########.fr       */
+/*   Updated: 2024/02/01 18:05:15 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ void		usleep_calc(t_timeval *start_time, int duration);
 int			philo_start(t_philo *philo);
 void		philo_routine(t_philo *philo);
 bool		philo_is_dead(t_philo *philo);
+void		unlink_sem(char *local_name, char *tready_name);
 int			init_sem(t_philo *philo);
 int			init_monitor(t_philo *philo);
 pthread_t	init_end_monitor(t_philo *philo);

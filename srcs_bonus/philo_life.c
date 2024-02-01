@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 13:31:35 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/31 18:23:58 by npirard          ###   ########.fr       */
+/*   Updated: 2024/02/01 18:41:08 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,12 @@ static int	take_forks(t_philo *philo)
 			usleep(1000);
 		break ;
 	}
+	if (philo->settings.nbr_philo == 1)
+	{
+		take_fork(philo);
+		usleep(philo->settings.time_to_die * 1000);
+		return (1);
+	}
 	if (sem_wait(philo->sem_forks))
 		return (1);
 	if (philo_is_dead(philo))
@@ -45,7 +51,6 @@ static int	take_forks(t_philo *philo)
 		return (1);
 	return (0);
 }
-
 
 static int	philo_sleep(t_philo *philo)
 {
@@ -95,10 +100,11 @@ void	philo_routine(t_philo *philo)
 		free_exit(philo, 1);
 	if (sem_post(philo->sem_pready))
 		free_exit(philo, 1);
-	if (sem_wait(philo->sem_start) || sem_wait(philo->sem_local))
+	if (sem_wait(philo->sem_start))
+		free_exit(philo, 1);
+	if (sem_wait(philo->sem_local))
 		free_exit(philo, 1);
 	gettimeofday(&philo->begin_time, NULL);
-	gettimeofday(&philo->last_meal, NULL);
 	if (sem_post(philo->sem_local))
 		free_exit(philo, 1);
 	while (1)

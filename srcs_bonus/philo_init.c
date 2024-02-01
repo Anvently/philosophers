@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:41:43 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/31 17:42:27 by npirard          ###   ########.fr       */
+/*   Updated: 2024/02/01 18:14:05 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,13 @@ static int	init_philo(int i, t_philo *philo)
 	err = 0;
 	if (philo->sem_local_name && philo->sem_tready_name)
 	{
+		unlink_sem(philo->sem_local_name, philo->sem_tready_name);
 		philo->sem_local = sem_open(philo->sem_local_name, O_CREAT, 0600, 0);
-		if (sem_post(philo->sem_local))
-			err = 1;
 		philo->sem_tready = sem_open(philo->sem_tready_name, O_CREAT, 0600, 0);
 		if (philo->sem_local == SEM_FAILED || philo->sem_tready == SEM_FAILED
-			|| sem_unlink(philo->sem_local_name)
-			|| sem_unlink(philo->sem_tready_name))
+			|| sem_post(philo->sem_local))
 			err = 1;
+		unlink_sem(philo->sem_local_name, philo->sem_tready_name);
 	}
 	free(philo->sem_local_name);
 	free(philo->sem_tready_name);

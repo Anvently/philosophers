@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:48:18 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/31 10:56:53 by npirard          ###   ########.fr       */
+/*   Updated: 2024/02/01 18:30:04 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	print_msg(t_philo *philo, t_timeval *time, int action)
 		philo->number);
 	print_msg_type(action);
 	printf(CL_RS);
-	if (sem_post(philo->sem_print))
+	if (action != msg_died && sem_post(philo->sem_print))
 		return (1);
 	return (0);
 }
