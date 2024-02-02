@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 11:41:43 by npirard           #+#    #+#             */
-/*   Updated: 2024/02/02 10:04:42 by npirard          ###   ########.fr       */
+/*   Updated: 2024/02/02 17:18:28 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ static int	philo_wait(t_philo *philo, pid_t *ids)
 			return (1);
 		i++;
 	}
-	wait(&status);
+	waitpid(-1, &status, 0);
 	kill_all(ids, philo);
 	kill_end_monitor(philo);
 	return (0);
