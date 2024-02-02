@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:48:18 by npirard           #+#    #+#             */
-/*   Updated: 2024/02/02 10:48:09 by npirard          ###   ########.fr       */
+/*   Updated: 2024/02/02 17:59:41 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,19 @@
 static void	print_msg_type(int action)
 {
 	if (action == msg_fork_taken)
-		printf(" has taken a fork\n");
+		printf(" has taken a fork");
 	else if (action == msg_is_eating)
-		printf(" is eating\n");
+		printf(" is eating");
 	else if (action == msg_is_sleeping)
-		printf(" is sleeping\n");
+		printf(" is sleeping");
 	else if (action == msg_is_thinking)
-		printf(" is thinking\n");
+		printf(" is thinking");
 	else if (action == msg_died)
-		printf(" died\n");
+		printf(" died");
 	else if (action == msg_created)
-		printf(" has been created\n");
+		printf(" has been created");
 	else if (action == msg_ended)
-		printf(" has eaten enough\n");
+		printf(" has eaten enough");
 }
 
 static void	color(t_philo *philo)
@@ -62,7 +62,7 @@ int	print_msg(t_philo *philo, t_timeval *time, int action)
 		+ (time->tv_usec - philo->begin_time.tv_usec) / 1000,
 		philo->number);
 	print_msg_type(action);
-	printf(CL_RS);
+	printf("%s\n", CL_RS);
 	if (sem_post(philo->sem_print))
 		return (1);
 	if (action == msg_died)
