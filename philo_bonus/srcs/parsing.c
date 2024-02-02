@@ -6,12 +6,12 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 16:32:42 by npirard           #+#    #+#             */
-/*   Updated: 2024/01/25 11:16:28 by npirard          ###   ########.fr       */
+/*   Updated: 2024/02/02 10:04:32 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
-#include <philo.h>
+#include <philo_bonus.h>
 
 int	parse_settings(t_settings *settings, char **args, int argc)
 {

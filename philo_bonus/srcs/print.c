@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:48:18 by npirard           #+#    #+#             */
-/*   Updated: 2024/02/01 18:30:04 by npirard          ###   ########.fr       */
+/*   Updated: 2024/02/02 10:48:09 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ static void	color(t_philo *philo)
 
 int	print_msg(t_philo *philo, t_timeval *time, int action)
 {
+	if (action != msg_died && philo_is_dead(philo))
+		return (1);
 	if (sem_wait(philo->sem_print))
 		return (1);
 	color(philo);
@@ -61,7 +63,9 @@ int	print_msg(t_philo *philo, t_timeval *time, int action)
 		philo->number);
 	print_msg_type(action);
 	printf(CL_RS);
-	if (action != msg_died && sem_post(philo->sem_print))
+	if (sem_post(philo->sem_print))
+		return (1);
+	if (action == msg_died)
 		return (1);
 	return (0);
 }
