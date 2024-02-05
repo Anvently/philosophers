@@ -6,7 +6,7 @@
 /*   By: npirard <npirard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:27:12 by npirard           #+#    #+#             */
-/*   Updated: 2024/02/02 10:05:03 by npirard          ###   ########.fr       */
+/*   Updated: 2024/02/05 10:20:26 by npirard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,12 @@ void	usleep_calc(t_timeval *start_time, int duration)
 	{
 		diff_usec = (1000000 - start_time->tv_usec) + time.tv_usec;
 		sleep_time = duration * 1000 - (diff_sec * 1000000 + diff_usec);
-		if (usleep(sleep_time))
-			usleep(sleep_time);
 	}
 	else
 	{
 		diff_usec = time.tv_usec - start_time->tv_usec;
 		sleep_time = duration * 1000 - diff_usec;
-		if (sleep_time > 0)
-			usleep(sleep_time);
 	}
+	if (sleep_time > 0)
+		usleep(sleep_time);
 }
